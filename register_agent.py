@@ -28,8 +28,23 @@ health = HealthCheck()
 
 
 class RequestHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/healthcheck':
+            self.handle_healthcheck()
+        else:
+            self.sent_request()
+
+    def handle_healthcheck(self):
+        message, status_code, headers = health.run()
+        self.send_response(status_code)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps(message).encode('utf-8'))
+
     def log_message(self, *args):
-        raise NotImplementedError("notImplemented() cannot be performed because ...")
+        logger.info(
+            f"{self.address_string()} - {self.log_date_time_string()} - {self.requestline}"
+        )
 
     def sent_request(self):
         message, status_code, headers = health.run()
