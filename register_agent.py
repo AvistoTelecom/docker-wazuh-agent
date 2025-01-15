@@ -79,18 +79,28 @@ def http_codes_serializer(response, status_code):
     return f"{json.loads(msg)} {code}"
 
 
+# def create_config_file():
+#     logger.info(f"Create Wazuh agent configuration for node {node_name}")
+#     with open("ossec.jinja2") as file_:
+#         template = Template(file_.read(), autoescape=True)
+#         config = template.render(
+#             join_manager_hostname=join_manager_worker,
+#             join_manager_port=join_manager_port,
+#             virus_total_key=virus_total_key,
+#         )
+#     wazuh_config_file = open("/var/ossec/etc/ossec.conf", "w")
+#     wazuh_config_file.write(f"{config} \n")
+#     wazuh_config_file.close()
+#     open("/var/ossec/etc/local_internal_options.conf", "wb").write(
+#         open("local_internal_options.jinja2", "rb").read()
+#     )
+#     logger.info(
+#         "Configuration has been generated from template, starting Wazuh agent provisioning"
+#     )
+
+
 def create_config_file():
     logger.info(f"Create Wazuh agent configuration for node {node_name}")
-    with open("ossec.jinja2") as file_:
-        template = Template(file_.read(), autoescape=True)
-        config = template.render(
-            join_manager_hostname=join_manager_worker,
-            join_manager_port=join_manager_port,
-            virus_total_key=virus_total_key,
-        )
-    wazuh_config_file = open("/var/ossec/etc/ossec.conf", "w")
-    wazuh_config_file.write(f"{config} \n")
-    wazuh_config_file.close()
     open("/var/ossec/etc/local_internal_options.conf", "wb").write(
         open("local_internal_options.jinja2", "rb").read()
     )
