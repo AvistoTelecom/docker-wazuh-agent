@@ -34,6 +34,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Extract metadata for tags (only for tagged builds)
+      - name: Extract metadata and generate tags (remove 'v' prefix)
+        if: startsWith(github.ref, 'refs/tags/v')
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ env.REPO_PATH_LOWER }}
+          tags: |
+            type=semver,pattern={{version}}
+          flavor: |
+            latest=false
+
       - name: Build and Push
         uses: docker/build-push-action@v5
         with:
@@ -42,5 +54,6 @@ jobs:
           tags: |
             ghcr.io/${{ env.REPO_PATH_LOWER }}/${{ env.IMAGE_NAME }}:latest
             ghcr.io/${{ env.REPO_PATH_LOWER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ steps.meta.outputs.tags }}
           labels: |
             org.opencontainers.image.source=${{ github.repository_url }}
