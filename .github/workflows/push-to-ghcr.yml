@@ -22,6 +22,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Convert repository owner and name to lowercase
+      - name: Set lowercase repository path
+        run: |
+          echo "REPO_PATH_LOWER=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -35,7 +40,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
-            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ghcr.io/${{ env.REPO_PATH_LOWER }}/${{ env.IMAGE_NAME }}:latest
+            ghcr.io/${{ env.REPO_PATH_LOWER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           labels: |
             org.opencontainers.image.source=${{ github.repository_url }}
