@@ -15,6 +15,13 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+USER root:root
+
+RUN mkdir /ossec-etc && cp -r /var/ossec/etc/* /ossec-etc
+
+COPY ./entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Expose agent directory for configuration
 VOLUME ["/var/ossec/etc"]
 
@@ -22,4 +29,4 @@ VOLUME ["/var/ossec/etc"]
 WORKDIR /var/ossec
 
 # Start the Wazuh agent
-CMD ["/var/ossec/bin/wazuh-agentd", "-f"]
+ENTRYPOINT ["/entrypoint.sh"]
